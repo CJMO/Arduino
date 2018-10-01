@@ -20,7 +20,9 @@ RF rf_manager = RF();
 
 ROM rom_manager = ROM();
 
-String texto_lectura = "";
+String input_string = "";
+
+String admin_key = "9999";
 
 
 ///////////////////////
@@ -43,7 +45,10 @@ char name[] = {
 
 void setup() {
 
-  rf_manager.initialize();
+  pinMode(D3, OUTPUT); 
+  pinMode(D5, OUTPUT);
+      
+  rf_manager.initialize(); 
 
   if (archivo == NULL)
   {
@@ -63,28 +68,49 @@ void setup() {
 void loop() {
   
   rf_manager.loop_RF();
-
+  
+  boolean admin_mode = 0;
   while (Serial.available() > 0) {
-
-    texto_lectura = Serial.readStringUntil('#');
+    
+    input_string = Serial.readStringUntil('\r\n');
+    
+    if(input_string.charAt(0) == '#' ){
+        admin_mode = 1;
+        // eliminar primer(#) y último caracter(fin de línea)
+        input_string = input_string.substring(1, input_string.length()-1);        
+    }
 
     // Convert from String Object to String.
-    char buf[sizeof(texto_lectura)];
-    texto_lectura.toCharArray(buf, sizeof(buf));
+    char buf[sizeof(input_string)];
+    input_string.toCharArray(buf, sizeof(buf));
     char *p = buf;
     char *str;
 
     byte newUid[4];
     int i=0;
     
+    if( admin_mode == 1 ){
+        Serial.println("Modo admin");
+        
+        Serial.println(input_string);
+        Serial.println(admin_key);
+        
+        if(input_string.equals(admin_key)){
+          Serial.println("Clave admin correcta");    
+       }
+       else {
+          Serial.println("Clave admin incorrecta");         
+       }
+    }
+    
     while ((str = strtok_r(p, ";", &p)) != NULL){ // delimiter is the semicolon
        Serial.println(str);
 
-       if(texto_lectura == "guardar"){
+       if(input_string == "guardar"){
           
           rom_manager.save(blockcontent, "Cristian");        
        }
-       else if(texto_lectura == "buscar"){
+       else if(input_string == "buscar"){
           Serial.println("buscando");
           rom_manager.search(name);        
        }
@@ -94,7 +120,7 @@ void loop() {
        }*/
 
        //int numero = atoi(str);
-      //Serial.println(numero, DEC);
+#      //Serial.println(numero, DEC);
 
     }
     //rf_manager.printDec(str);   

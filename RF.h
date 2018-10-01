@@ -20,7 +20,7 @@ class RF{
       for (byte i = 0; i < 6; i++) {
         key.keyByte[i] = 0xFF;
       }
-
+      
       Serial.println(F("Inicialización finalizada"));
       
       Serial.println(F("Clave"));
@@ -30,13 +30,46 @@ class RF{
     byte ActualUID[4]; //almacenará el código del Tag leído
     byte Usuario2[4]= {0xB7, 0xAE, 0xC7, 0x73} ; //código del usuario 1
     byte Usuario1[4]= {183, 174, 199, 115} ; //código del usuario 2
+    
+    byte clave1 = 183;
+    byte clave2 = 174;
+    byte clave3 = 199;
+    byte clave4 = 115;
+    
+    byte clave[4] = {clave1, clave2, clave3, clave4};
+    
+    /*private:
+    void delay_led(int seconds){
+        int timeout = 1000 * seconds;
+        int flag = 1;
+        
+        while(flag == 1){
+            //if (timeout && flag) {
+            if (timeout > 0) {
+               timeout--;
+               delay(1);
+               //digitalWrite (D3, HIGH);
+            } else {
+               digitalWrite (D3, LOW);
+               flag = 0; // prevent any more digitalwrite low
+               return;
+            }
+        }
+        }
+    }*/
+        
 
     public:
     void loop_RF() {
+       
+       digitalWrite(D3, LOW);
+       digitalWrite(D5, LOW);
+        
       // Revisamos si hay nuevas tarjetas  presentes
       if ( rfid.PICC_IsNewCardPresent()) {  
         //Seleccionamos una tarjeta
-        if ( rfid.PICC_ReadCardSerial()) {                     
+        if ( rfid.PICC_ReadCardSerial()) {            
+            
             Serial.print(F("Tipo de tarjeta: "));
             MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
             Serial.println(rfid.PICC_GetTypeName(piccType));
@@ -51,11 +84,22 @@ class RF{
 
             //comparamos los UID para determinar si es uno de nuestros usuarios  
             if(compareArray(rfid.uid.uidByte,Usuario1))
-            Serial.println("Acceso concedido...");
+            {
+                Serial.println("Acceso concedido...");
+                digitalWrite(D3, HIGH);  
+                delay(3000);
+                //delay_led(3);
+                digitalWrite(D3, LOW);
+            }            
             else
-            Serial.println("Acceso denegado...");
-            
-            
+            {
+                Serial.println("Acceso denegado...");
+                //digitalWrite(D5, HIGH);
+                //digitalWrite(D3, LOW);
+                //delay(3000);
+                //digitalWrite(D5, HIGH);
+            }
+                        
             // Store NUID into nuidPICC array
             for (byte i = 0; i < 4; i++) {
               ActualUID[i] = rfid.uid.uidByte[i];
@@ -70,7 +114,8 @@ class RF{
             rfid.PICC_HaltA();
             
             // Stop encryption on PCD
-            rfid.PCD_StopCrypto1();
+            rfid.PCD_StopCrypto1();           
+                         
       
         }
           
