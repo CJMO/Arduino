@@ -92,8 +92,8 @@ void loop() {
     if( admin_mode == 1 ){
         Serial.println("Modo admin");
         
-        Serial.println(input_string);
-        Serial.println(admin_key);
+        //Serial.println(input_string);
+        //Serial.println(admin_key);
         
         if(input_string.equals(admin_key)){
           Serial.println("Clave admin correcta");    
