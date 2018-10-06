@@ -25,23 +25,11 @@ String input_string = "";
 String admin_key = "9999";
 
 
-///////////////////////
-int block=6;//this is the block number we will write into and then read. Do not write into 'sector trailer' block, since this can make the block unusable.
-
-//byte blockcontent[16] = {"000000000000001"};//an array with 16 bytes to be written into one of the 64 card blocks is defined
-//byte blockcontent[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1};//all zeros. This can be used to delete a block.
-byte readbackblock[18];//This array is used for reading out a block. The MIFARE_Read method requires a buffer that is at least 18 bytes to hold the 16 bytes of a block.
-
-byte blockcontent[]    = {
-    0x01, 0x02, 0x03, 0x04, //  1,  2,   3,  4,
-    0x05, 0x06, 0x07, 0x08, //  5,  6,   7,  8,
-    0x08, 0x09, 0xff, 0x0b, //  9, 10, 255, 12,
-    0x0c, 0x0d, 0x0e, 0x0f  // 13, 14,  15, 16
-};
-
-char name[] = {
-    "CJMO"
-};
+//
+char nombre[] = "CJMO";
+char clave[] = "CJMO";
+char nombre2[] = "C";
+char nombre3[] = "C3";
 
 void setup() {
 
@@ -96,23 +84,33 @@ void loop() {
         //Serial.println(admin_key);
         
         if(input_string.equals(admin_key)){
-          Serial.println("Clave admin correcta");    
+          Serial.println("Clave admin correcta"); 
+           
        }
        else {
           Serial.println("Clave admin incorrecta");         
        }
     }
-    
-    while ((str = strtok_r(p, ";", &p)) != NULL){ // delimiter is the semicolon
-       Serial.println(str);
 
-       if(input_string == "guardar"){
           
-          rom_manager.save(blockcontent, "Cristian");        
+    while ((str = strtok_r(p, ";", &p)) != NULL){ // delimiter is the semicolon
+       
+       String t = String(str);
+       t = t.substring(0, t.length()-1);
+       //Serial.println(t);
+       //Serial.println(t.length());
+       
+
+       if(t.equals("guardar")){
+          Serial.println("guardando");      
+          rom_manager.save(nombre, clave); 
+          rom_manager.save(nombre2, clave);    
+            
        }
-       else if(input_string == "buscar"){
+       else if(t.equals("buscar")){
           Serial.println("buscando");
-          rom_manager.search(name);        
+          rom_manager.search(nombre2); 
+                 
        }
 
        /*if(i<4){
