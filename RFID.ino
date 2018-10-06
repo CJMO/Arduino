@@ -74,10 +74,10 @@ void loop() {
     
     input_string = Serial.readStringUntil('\r\n');
     
-    if(input_string.charAt(0) == '#' ){
+    if(input_string.charAt(0) == '*' and input_string.charAt(1) == '#' ){
         admin_mode = 1;
         // eliminar primer(#) y último caracter(fin de línea)
-        input_string = input_string.substring(1, input_string.length()-1);        
+        input_string = input_string.substring(2, input_string.length()-1);        
     }
 
     // Convert from String Object to String.
@@ -120,7 +120,7 @@ void loop() {
        }*/
 
        //int numero = atoi(str);
-#      //Serial.println(numero, DEC);
+       //Serial.println(numero, DEC);
 
     }
     //rf_manager.printDec(str);   
