@@ -1,6 +1,6 @@
-#include <SPI.h>
-#include <MFRC522.h>
-#include <EEPROM.h>
+//#include <SPI.h>
+//#include <MFRC522.h>
+//#include <EEPROM.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,17 +8,17 @@
 #define RST_PIN  D4    //Pin 9 para el reset del RC522
 #define SS_PIN  SS   //Pin 10 para el SS (SDA) del RC522
 
-MFRC522 rfid(SS_PIN, RST_PIN); ///Creamos el objeto para el RC522
-MFRC522::MIFARE_Key key;
-
-#include "RF.h"
-#include "ROM.h"
+#include "RF.cpp"
+#include "ROM.cpp"
+#include "Web.h"
 
 FILE *archivo = fopen("D:/Datos/Documents/Arduino/RFID/log.txt", "w");
 
 RF rf_manager = RF();
 
 ROM rom_manager = ROM();
+
+Web web_manager = Web();
 
 String input_string = "";
 
@@ -35,8 +35,10 @@ void setup() {
 
   pinMode(D3, OUTPUT); 
   pinMode(D5, OUTPUT);
-      
+ 
   rf_manager.initialize(); 
+  
+  web_manager.setup_web();
 
   if (archivo == NULL)
   {
@@ -56,6 +58,7 @@ void setup() {
 void loop() {
   
   rf_manager.loop_RF();
+  web_manager.loop_web();
   
   boolean admin_mode = 0;
   while (Serial.available() > 0) {
@@ -97,8 +100,6 @@ void loop() {
        
        String t = String(str);
        t = t.substring(0, t.length()-1);
-       //Serial.println(t);
-       //Serial.println(t.length());
        
 
        if(t.equals("guardar")){
@@ -113,18 +114,9 @@ void loop() {
                  
        }
 
-       /*if(i<4){
-        newUid[i] = (BYTE*)str;
-       }*/
-
-       //int numero = atoi(str);
-       //Serial.println(numero, DEC);
-
     }
     //rf_manager.printDec(str);   
 
-    /*int respuesta = rf_manager.writeBlock(block, blockcontent);//the blockcontent array is written into the card block
-    Serial.println(respuesta, DEC);*/
      
   }
   //rf_manager.writeCard();
