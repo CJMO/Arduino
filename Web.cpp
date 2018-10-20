@@ -2,8 +2,8 @@
 #include "ROM.cpp"
 
 // Datos de conexión a Wifi
-const char* ssid = "FLIAMUNOZ";
-const char* password = "15304482";
+const char* ssid = "ID_RED";
+const char* password = "CLAVE_RED";
 
 // Instancia de servidor web
 ESP8266WebServer server(80);
